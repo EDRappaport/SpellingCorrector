@@ -33,10 +33,7 @@ def getCondProbs(count_1edit, count_2l):
 			edit = edit + p + ' '
 		edit = edit[0:len(edit)-1]
 
-		if edit in conditionals:
-			conditionals[edit] += float(count)
-		else:
-			conditionals[edit] = float(count)
+		conditionals[edit] = float(count)
 	fid.close()
 
 	conditionalProbs={}
