@@ -95,61 +95,71 @@ fidOut = open(outputFile, 'w')
 #sentence = sys.argv[1:]
 for line in fidIn:
   sentence = string.split(line)
-  print sentence
+  editProbs = []
   for i in range(len(sentence)):
-	curWord = sentence[i].lower()
-	if i == 0:
-	  prevWord = '.'
-	else:
-	  prevWord = sentence[i-1].lower()
+    editProbs.append(.0000001)
 
-	if i == len(sentence) - 1:
-	  nextWord = '.'
-	else:
-	  nextWord = sentence[i+1].lower()
+  changed = True
+  while changed == True:
+    changed = False
+    for i in range(len(sentence)):
+      curWord = sentence[i].lower()
+      if i == 0:
+        prevWord = '.'
+      else:
+        prevWord = sentence[i-1].lower()
 
-	probs = edits1(curWord)
+      if i == len(sentence) - 1:
+        nextWord = '.'
+      else:
+        nextWord = sentence[i+1].lower()
 
-	maxProb = 0
-	bestWord = curWord
-	probs[curWord] = .0000001
-	for p in probs:
-	  #p1 = float(NGramProbs.getBiGramProb("_START_ " + p))
-	  #p2 = float(NGramProbs.getBiGramProb(p + " " + word2))
+      probs = edits1(curWord)
 
-	  #if (p1 != 0) & (p2 != 0):
-		#curP = math.log10(p1) + math.log10(p2) + math.log10(float(probs[p]))
+      maxProb = 0
+      bestWord = curWord
+      ep = editProbs[i]
+      #probs[curWord] = .0000001
+      probs[curWord] = editProbs[i]
+      for p in probs:
 
-	  #Smoothing:
-	  f1 = cfd[prevWord][p]
-	  t1 = cfd[prevWord].N()
-	  if t1 == 0:
-		t1 = 1000
-	  if f1 == 0:
-		f1 = .001
-		t1=t1+1
+        #Smoothing:
+        f1 = cfd[prevWord][p]
+        t1 = cfd[prevWord].N()
+        if t1 == 0:
+          t1 = 1000
+        if f1 == 0:
+          f1 = .001
+          t1=t1+1
 
-	  f2 = cfd[p][nextWord]
-	  t2 = cfd[p].N()
-	  if t2 == 0:
-		t2 = 1000
-	  if f2 == 0:
-		f2 = .001
-		t2=t2+1
-	  #
+        f2 = cfd[p][nextWord]
+        t2 = cfd[p].N()
+        if t2 == 0:
+          t2 = 1000
+        if f2 == 0:
+          f2 = .001
+          t2=t2+1
+        #
 
-	  p1 = float(f1)/float(t1)
-	  p2 = float(f2)/float(t2)
-	  #curP = math.pow(p1, 2) * probs[p] * math.pow(p2, 2)
-	  curP = p1 * probs[p] *p2
-	  #print curWord + "- " + p +"; p1 = " + str(p1) + "; p2 = " + str(p2) +";  " + str(probs[p])
-	  if curP > maxProb:
-		maxProb = curP
-		bestWord = p
+        p1 = float(f1)/float(t1)
+        p2 = float(f2)/float(t2)
+        #curP = math.pow(p1, 2) * probs[p] * math.pow(p2, 2)
+        curP = p1 * probs[p] *p2
+        #print curWord + "- " + p +"; p1 = " + str(p1) + "; p2 = " + str(p2) +";  " + str(probs[p])
+        if curP > maxProb:
+          maxProb = curP
+          bestWord = p
+          ep = probs[p]
 
-	print maxProb
-	print bestWord
-	if i == len(sentence) - 1:
-	  fidOut.write(bestWord+"\n")
-	else:
-	  fidOut.write(bestWord+" ")
+
+      print maxProb
+      print bestWord
+      editProbs[i] = ep
+      if bestWord != sentence[i]:
+        changed =True
+        sentence[i] = bestWord
+
+      if i == len(sentence) - 1:
+        fidOut.write(bestWord+"\n")
+      else:
+        fidOut.write(bestWord+" ")
