@@ -85,6 +85,8 @@ for w in text:
 bigrams = nltk.bigrams(words)
 cfd = nltk.ConditionalFreqDist(bigrams)
 
+print cfd['actress'].N()
+sys.exit(-1)
 
 sentenceFile = str(sys.argv[1])
 fidIn = open(sentenceFile, 'r')
@@ -96,8 +98,12 @@ fidOut = open(outputFile, 'w')
 for line in fidIn:
   sentence = string.split(line)
   editProbs = []
+  sentProbs = []
   for i in range(len(sentence)):
     editProbs.append(.0000001)
+    probs = edits1(sentence[i])
+    probs[sentence[i]] = .0000001
+    sentProbs.append(probs)
 
   changed = True
   while changed == True:
@@ -114,7 +120,8 @@ for line in fidIn:
       else:
         nextWord = sentence[i+1].lower()
 
-      probs = edits1(curWord)
+      #probs = edits1(curWord)
+      probs = sentProbs[i]
 
       maxProb = 0
       bestWord = curWord
@@ -126,25 +133,27 @@ for line in fidIn:
         #Smoothing:
         f1 = cfd[prevWord][p]
         t1 = cfd[prevWord].N()
-        if t1 == 0:
+        #if t1 == 0:
+        if t1 < 5:
           t1 = 1000
         if f1 == 0:
-          f1 = .001
+          f1 = .0001
           t1=t1+1
 
         f2 = cfd[p][nextWord]
         t2 = cfd[p].N()
-        if t2 == 0:
+        #if t2 == 0:
+        if t2 < 5:
           t2 = 1000
         if f2 == 0:
-          f2 = .001
+          f2 = .0001
           t2=t2+1
         #
 
         p1 = float(f1)/float(t1)
         p2 = float(f2)/float(t2)
         #curP = math.pow(p1, 2) * probs[p] * math.pow(p2, 2)
-        curP = p1 * probs[p] *p2
+        curP = p1 * probs[p] * p2
         #print curWord + "- " + p +"; p1 = " + str(p1) + "; p2 = " + str(p2) +";  " + str(probs[p])
         if curP > maxProb:
           maxProb = curP
