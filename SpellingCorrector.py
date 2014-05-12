@@ -2,6 +2,7 @@ import re, collections
 import sys
 import string
 import math
+import nltk
 import ReadCondProbs
 import NGramProbs
 
@@ -67,28 +68,62 @@ def edits1(word):
 if len(sys.argv) != 3:
   print("Usage: python SpellingCorrector.py <Word>")
   #print("Example: python TC_simpleKNN.py corpus1_train.labels corpus1_test.list")
-  sys.exit(-1)
+  #sys.exit(-1)
 
-word1 = str(sys.argv[1])
-word2 = str(sys.argv[2])
+text = nltk.corpus.brown.words()
+words = []
+for w in text:
+  words.append(w.lower())
+bigrams = nltk.bigrams(words)
+cfd = nltk.ConditionalFreqDist(bigrams)
 
-probs = edits1(word1)
+sentence = sys.argv[1:]
+for i in range(len(sentence)):
+  curWord = sentence[i].lower()
+  if i == 0:
+    prevWord = '.'
+  else:
+    prevWord = sentence[i-1].lower()
 
-maxProb = -10000000000
-bestWord = word1
-for p in probs:
-  p1 = float(NGramProbs.getBiGramProb("_START_ " + p))
-  p2 = float(NGramProbs.getBiGramProb(p + " " + word2))
+  if i == len(sentence) - 1:
+    nextWord = '.'
+  else:
+    nextWord = sentence[i+1].lower()
 
-  print p
-  print p1
-  print p2
+  probs = edits1(curWord)
 
-  if (p1 != 0) & (p2 != 0):
-    curP = math.log10(p1) + math.log10(p2) + math.log10(float(probs[p]))
+  maxProb = 0
+  bestWord = curWord
+  probs[curWord] = .0000001
+  for p in probs:
+    #p1 = float(NGramProbs.getBiGramProb("_START_ " + p))
+    #p2 = float(NGramProbs.getBiGramProb(p + " " + word2))
+
+    #if (p1 != 0) & (p2 != 0):
+      #curP = math.log10(p1) + math.log10(p2) + math.log10(float(probs[p]))
+    f1 = cfd[prevWord][p]
+    t1 = cfd[prevWord].N()
+    if t1 == 0:
+      t1 = 1000
+    if f1 == 0:
+      f1 = .001
+      t1=t1+1
+
+    f2 = cfd[p][nextWord]
+    t2 = cfd[p].N()
+    if t2 == 0:
+      t2 = 1000
+    if f2 == 0:
+      f2 = .001
+      t2=t2+1
+
+    p1 = float(f1)/float(t1)
+    p2 = float(f2)/float(t2)
+    curP = p1 * probs[p] *p2
+    #print curWord + "- " + p +"; p1 = " + str(p1) + "; p2 = " + str(p2) +";  " + str(probs[p])
     if curP > maxProb:
       maxProb = curP
       bestWord = p
 
-print maxProb
-print bestWord
+  print maxProb
+  print bestWord
