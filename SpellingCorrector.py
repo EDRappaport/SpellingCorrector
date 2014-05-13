@@ -72,8 +72,22 @@ if len(sys.argv) != 3:
   #print("Example: python TC_simpleKNN.py corpus1_train.labels corpus1_test.list")
   #sys.exit(-1)
 
+words=[]
+fileList = os.listdir("text")
+for f in fileList:
+  fid = open("text/"+f)
+  text = fid.read()
+  for w in text.split():
+    words.append(w.lower())
+
+fileList = os.listdir("text2")
+for f in fileList:
+  fid = open("text2/"+f)
+  text = fid.read()
+  for w in text.split():
+    words.append(w.lower())
+
 text = nltk.corpus.brown.words()
-words = []
 for w in text:
   words.append(w.lower())
 text = nltk.corpus.reuters.words()
@@ -84,9 +98,6 @@ for w in text:
   words.append(w.lower())
 bigrams = nltk.bigrams(words)
 cfd = nltk.ConditionalFreqDist(bigrams)
-
-print cfd['actress'].N()
-sys.exit(-1)
 
 sentenceFile = str(sys.argv[1])
 fidIn = open(sentenceFile, 'r')
