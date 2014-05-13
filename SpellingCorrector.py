@@ -4,6 +4,7 @@ import os
 import string
 import math
 import nltk
+import Queue
 import ReadCondProbs
 import NGramProbs
 
@@ -135,6 +136,11 @@ for line in fidIn:
       probs = sentProbs[i]
 
       maxProb = 0
+      bestProbs = Queue.PriorityQueue(3)
+      bestProbs.put_nowait([0, ""])
+      bestProbs.put_nowait([0, ""])
+      bestProbs.put_nowait([0, ""])
+
       bestWord = curWord
       ep = editProbs[i]
       #probs[curWord] = .0000001
@@ -166,10 +172,18 @@ for line in fidIn:
         #curP = math.pow(p1, 2) * probs[p] * math.pow(p2, 2)
         curP = p1 * probs[p] * p2
         #print curWord + "- " + p +"; p1 = " + str(p1) + "; p2 = " + str(p2) +";  " + str(probs[p])
-        if curP > maxProb:
-          maxProb = curP
-          bestWord = p
+        #if curP > maxProb:
+          #maxProb = curP
+          #bestWord = p
+          #ep = probs[p]
+        currentMin = bestProbs.get(False)
+        if curP > currentMin[0]:
+          bestProbs.put_nowait([curP, p])
           ep = probs[p]
+
+        else:
+          bestProbs.put_nowait(currentMin)
+
 
 
       print maxProb
@@ -180,6 +194,8 @@ for line in fidIn:
         sentence[i] = bestWord
 
       if i == len(sentence) - 1:
-        fidOut.write(bestWord+"\n")
+        #fidOut.write(bestWord+"\n")
+        fidOut.write("{" + bestProbs.get(False)[1] + ", " + bestProbs.get(False)[1] + ", " + bestProbs.get(False)[1] + "}\n")
       else:
-        fidOut.write(bestWord+" ")
+        fidOut.write("{" + bestProbs.get(False)[1] + ", " + bestProbs.get(False)[1] + ", " + bestProbs.get(False)[1] +"} ")
+        #fidOut.write(bestWord+" ")
