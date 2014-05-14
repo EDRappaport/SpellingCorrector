@@ -74,19 +74,14 @@ if len(sys.argv) != 3:
   #sys.exit(-1)
 
 words=[]
-fileList = os.listdir("text")
-for f in fileList:
-  fid = open("text/"+f)
-  text = fid.read()
-  for w in text.split():
-    words.append(w.lower())
 
-fileList = os.listdir("text2")
-for f in fileList:
-  fid = open("text2/"+f)
-  text = fid.read()
-  for w in text.split():
-    words.append(w.lower())
+if len(sys.argv) > 3:
+  fileList = os.listdir(sys.argv[3])
+  for f in fileList:
+    fid = open(sys.argv[3]+f)
+    text = fid.read()
+    for w in text.split():
+      words.append(w.lower())
 
 text = nltk.corpus.brown.words()
 for w in text:
@@ -112,6 +107,7 @@ for line in fidIn:
   editProbs = []
   sentProbs = []
   for i in range(len(sentence)):
+    sentence[i] = sentence[i].lower()
     editProbs.append(.0000001)
     probs = edits1(sentence[i])
     probs[sentence[i]] = .0000001
@@ -143,8 +139,9 @@ for line in fidIn:
 
       bestWord = curWord
       ep = editProbs[i]
-      #probs[curWord] = .0000001
+
       probs[curWord] = editProbs[i]
+
       for p in probs:
 
         #Smoothing:
@@ -171,11 +168,6 @@ for line in fidIn:
         p2 = float(f2)/float(t2)
         #curP = math.pow(p1, 2) * probs[p] * math.pow(p2, 2)
         curP = p1 * probs[p] * p2
-        #print curWord + "- " + p +"; p1 = " + str(p1) + "; p2 = " + str(p2) +";  " + str(probs[p])
-        #if curP > maxProb:
-          #maxProb = curP
-          #bestWord = p
-          #ep = probs[p]
         currentMin = bestProbs.get(False)
         if curP > currentMin[0]:
           bestProbs.put_nowait([curP, p])
@@ -185,13 +177,21 @@ for line in fidIn:
           bestProbs.put_nowait(currentMin)
 
 
+      w1 = bestProbs.get(False);
+      w2 = bestProbs.get(False);
+      w3 = bestProbs.get(False);
 
-      print maxProb
-      print bestWord
-      editProbs[i] = ep
+      bestWord = w3[1]
+
+      bestProbs.put_nowait(w1)
+      bestProbs.put_nowait(w2)
+      bestProbs.put_nowait(w3)
+
+      
       if bestWord != sentence[i]:
         changed =True
         sentence[i] = bestWord
+        editProbs[i] = ep
 
       if i == len(sentence) - 1:
         #fidOut.write(bestWord+"\n")
