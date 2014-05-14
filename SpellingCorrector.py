@@ -68,10 +68,9 @@ def edits1(word):
 
 
 #MAIN:
-if len(sys.argv) != 3:
-  print("Usage: python SpellingCorrector.py <Word>")
-  #print("Example: python TC_simpleKNN.py corpus1_train.labels corpus1_test.list")
-  #sys.exit(-1)
+if len(sys.argv) < 3 or len(sys.argv) > 4:
+  print("Usage: python SpellingCorrector.py <Input> <Output> [More Training]")
+  sys.exit(-1)
 
 words=[]
 
