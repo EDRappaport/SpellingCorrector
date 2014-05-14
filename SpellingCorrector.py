@@ -1,6 +1,7 @@
 import re, collections
 import sys
 import os
+import time
 import string
 import math
 import nltk
@@ -93,6 +94,8 @@ for w in text:
   words.append(w.lower())
 bigrams = nltk.bigrams(words)
 cfd = nltk.ConditionalFreqDist(bigrams)
+
+startTime = time.time()
 
 sentenceFile = str(sys.argv[1])
 fidIn = open(sentenceFile, 'r')
@@ -198,3 +201,6 @@ for line in fidIn:
       else:
         fidOut.write("{" + bestProbs.get(False)[1] + ", " + bestProbs.get(False)[1] + ", " + bestProbs.get(False)[1] +"} ")
         #fidOut.write(bestWord+" ")
+
+finishTime = time.time()
+print finishTime - startTime
