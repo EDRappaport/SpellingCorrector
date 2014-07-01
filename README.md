@@ -36,7 +36,7 @@ The final program outputs the top three possibilities for each word in the sente
 
 The user inputs to the program a text file with the lines that need correction and an output file.  The user may optionally use an additional argument specifying a directory that contains additional text files for the corpus. Adding more text files may help the program's performance.  For most of my tests I used all the data found at http://corpus.byu.edu/full-text/formats.asp.
 
-python SpellingCorrector.py <Input> <Output> [More Training]
+python SpellingCorrector.py Input Output [More Training]
 
 ## Sample Results ##
 
