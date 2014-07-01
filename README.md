@@ -42,17 +42,17 @@ python SpellingCorrector.py <Input> <Output> [More Training]
 
 The following is a list of example inputs that were properly corrected by this program with the training files used (the typos are bolded):
 
-I will go to bed in FITEEN minutes
-I will go to bed in FFITEEN minutes
-I will go to bed in FIFTAEEN minutes
-I will go to bed in FIFTAEN minutes
-I will go to bed in fifteen MINUETS
+I will go to bed in FITEEN minutes  
+I will go to bed in FFITEEN minutes  
+I will go to bed in FIFTAEEN minutes  
+I will go to bed in FIFTAEN minutes  
+I will go to bed in fifteen MINUETS  
 
 Do you NED ANYTING ALSE FRM ME
 
-My house is the one with the porch up FROUNT
-Sometimes in the middle of the night I go to WACH tv
-If you can read this you must be RAELLY smart
-If you can read this you must be really SMRAT
-I THING that this is important
-he lived on the DESSERT island
+My house is the one with the porch up FROUNT  
+Sometimes in the middle of the night I go to WACH tv  
+If you can read this you must be RAELLY smart  
+If you can read this you must be really SMRAT  
+I THING that this is important  
+he lived on the DESSERT island  
